@@ -10,7 +10,7 @@ namespace PZ_05
     {
         static void Main(string[] args)
         {
-            Console.WriteLine (" Введите время нахождения тела в свободном падении ");
+            Console.WriteLine (" Введите время нахождения тела в свободном падении");
             double i = Convert.ToDouble(Console.ReadLine());
 
             double g = 9.8;
