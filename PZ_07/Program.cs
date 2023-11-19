@@ -47,7 +47,7 @@ namespace PZ_07
             Console.WriteLine("\n" + "Минимальный элемента матрицы " + Math.Round(minValue,2));           // вывод всех значений 
             Console.WriteLine("Сумма положительных элементов матрицы равна " +Math.Round(sum,2));
             double e = minValue * sum;
-            Console.WriteLine("Их произведение равно  " +Math.Round(e,2));
+            Console.WriteLine("Их произведение равно " +Math.Round(e,2));
         }
     }
 }
