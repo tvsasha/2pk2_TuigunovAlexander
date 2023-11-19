@@ -23,7 +23,7 @@ namespace PZ_03
                 {
                     case 1:
                         if (k.ContainsKey(1))
-                            Console.WriteLine("Время 08:00-09:00 уже занято ");
+                            Console.WriteLine("Время 08:00-09:00 уже занято");
                         else
                         {
                             Console.WriteLine("Введите имя \nВведите номер телефона");
