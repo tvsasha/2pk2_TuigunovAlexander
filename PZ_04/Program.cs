@@ -10,7 +10,7 @@ namespace PZ_04
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Задание 1 "); 
+            Console.WriteLine("Задание 1"); 
             for (int i = -50; i <= 0; i += 5)
             {
                 Console.WriteLine(" " + i);
