@@ -31,15 +31,10 @@ namespace PZ_16
         static byte bossCount = 0;
         static int bossSpawn = 0;
         static int animationDelay = 100;
-        static void Main(string[] args)
-            
+        static void Main(string[] args)         
         {
-            Preview2();
-            //GenerationMap();
-            //Move();
-            //UpdateMap();
+            Preview2();            
         }
-
         // <summary>
         // генерация карты с расставлением врагов, аптечек, баффов
         // </summary>
@@ -55,7 +50,6 @@ namespace PZ_16
                 }
             }
             map[playerX, playerY] = 'P'; // в середину карты ставится игрок
-
             //временные координаты для проверки занятости ячейки
             int x;
             int y;
@@ -97,7 +91,6 @@ namespace PZ_16
                     health--;
                 }
             }
-
             UpdateMap(); //отображение заполненной карты на консоли
         }
         // <summary>
@@ -121,7 +114,6 @@ namespace PZ_16
                 {
                     playerOldX = playerX;
                     playerOldY = playerY;
-
                     //смена координат в зависимости от нажатия клавиш\
                     if (enemyCount <= 11 && enemyCount != 0 && playerHP>0 && playerHP<51) 
                     {
@@ -151,7 +143,6 @@ namespace PZ_16
                                 CloseInfo1();
                                 CloseInfo2();
                                 break;
-
                             case ConsoleKey.LeftArrow:
                                 playerY--;
                                 playerStepCount++;
@@ -181,9 +172,6 @@ namespace PZ_16
 
                                 break;
                         }
-
-
-
                         switch (map[playerX, playerY])
                         {
                             case 'E':
@@ -212,8 +200,7 @@ namespace PZ_16
                                 Console.SetCursorPosition(playerOldY, playerOldX);
                                 Console.Write('_');
                                 Console.ResetColor();
-                                AidAUP();
-                                
+                                AidAUP();                           
                                 break;
                             case 'D':
                                 FightBoss();
@@ -224,9 +211,7 @@ namespace PZ_16
                                 break;
 
                         }
-
                         Console.CursorVisible = false; //скрытный курсов
-
                         //предыдущее положение игрока затирается
                         Console.BackgroundColor = ConsoleColor.White;
                         Console.ForegroundColor = ConsoleColor.Black;
@@ -234,8 +219,6 @@ namespace PZ_16
                         Console.SetCursorPosition(playerOldY, playerOldX);
                         Console.Write('_');
                         Console.ResetColor();
-
-
                         //обновленное положение игрока
                         Console.BackgroundColor = ConsoleColor.White;
                         Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -243,10 +226,6 @@ namespace PZ_16
                         Console.SetCursorPosition(playerY, playerX);
                         Console.Write('P');
                         Console.ResetColor();
-
-
-
-
                         //вывод всей нужной информации для пользователя
                         if (playerHP < 10)
                         {
@@ -282,8 +261,6 @@ namespace PZ_16
                             GenerationMap();
                             UpdateMap();
                         }
-
-
                     }
                     else if (playerHP == 0 || playerHP > 51)
                     {
@@ -296,37 +273,6 @@ namespace PZ_16
                             Preview2();
 
                         }
-
-
-
-                        //int x = mapsize / 2;
-                        //int y = mapsize / 2;
-
-                        //if (map[x, y] == '_')
-                        //{
-                        //    map[x, y] = 'd';
-
-                        //}
-                        //for (int i = 0; i < mapsize; i++)
-                        //{
-                        //    for (int j = 0; j < mapsize; j++)
-                        //    {
-                        //        console.write(map[i, j]);
-                        //    }
-                        //}
-
-                        //Console.SetCursorPosition(40, 15);
-                        //Console.ForegroundColor = ConsoleColor.Green;
-                        //Console.WriteLine($"Вы победили всех врагов и босса за {playerStepCount} шагов");
-                        //Console.ResetColor();
-
-
-
-                        //Console.SetCursorPosition(40, 15);
-
-
-
-
                     }
                 }
                                
@@ -577,7 +523,6 @@ namespace PZ_16
             switch (Console.ReadKey().Key)
             {
                 case ConsoleKey.R:
-
                     UpdateMap();
                     Move();
                     break;
@@ -585,9 +530,9 @@ namespace PZ_16
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.SetCursorPosition(40, 15);                                   
                     Console.ResetColor();
-                    GameLoad();
-                    Console.SetCursorPosition(40, 15);
-                    Console.WriteLine("Введите имя файла");
+                    LoadGame();
+                    UpdateMap();
+                    Move();
                     break;
                 case ConsoleKey.N:
                     NewGame();
@@ -596,14 +541,15 @@ namespace PZ_16
                     UpdateMap();
                     break;
                 case ConsoleKey.S:
-                    GameSave();
+                    SaveGame();
+                    Console.Write("Игра сохранена");
+                    UpdateMap();
                     break;
             }
                     return;
         }
         static void Preview2()
         {
-
             enemies = 10; //количество врагов
             byte enemyCount = 0;
             byte buffs = 5; //количество усилений
@@ -624,12 +570,11 @@ namespace PZ_16
             switch (Console.ReadKey().Key)
             {              
                 case ConsoleKey.Z:
+                    Console.Clear();
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.SetCursorPosition(40, 15);
                     Console.ResetColor();
-                    GameLoad();
-                    Console.SetCursorPosition(40, 15);
-                    Console.WriteLine("Введите имя файла");
+                    LoadGame();
                     break;
                 case ConsoleKey.N:
                     NewGame();
@@ -640,71 +585,33 @@ namespace PZ_16
             }
             return;
         }
-        static void GameSave()
+        static void SaveGame()
         {
-            Console.WriteLine(" Сохранить игру? (Y/N)");
-            ConsoleKeyInfo saveKey = Console.ReadKey(true);
-
-            if (saveKey.Key == ConsoleKey.Y)
+            // Создание или перезапись файла save.txt
+            using (StreamWriter writer = new StreamWriter("save.txt"))
             {
-                
-                string fileName = Console.ReadLine();
-
-                if (File.Exists(fileName))
+                writer.WriteLine(playerX);
+                writer.WriteLine(playerY);
+                writer.WriteLine(playerHP);
+                writer.WriteLine(playerStrong);
+                writer.WriteLine(playerStepCount);
+                writer.WriteLine(enemyCount);
+                writer.WriteLine(bossCount);
+                // Сохранение карты в файл
+                for (int i = 0; i < 25; i++)
                 {
-                    Console.WriteLine("Файл сохранения уже существует. Перезаписать его? (Y/N)");
-                    ConsoleKeyInfo overwriteKey = Console.ReadKey(true);
-
-                    if (overwriteKey.Key != ConsoleKey.Y)
+                    for (int j = 0; j < 25; j++)
                     {
-                        Console.WriteLine("Сохранение отменено.");
-                        return;
+                        writer.Write(map[i, j]);
                     }
+                    writer.WriteLine();
                 }
 
-                fileName = Path.ChangeExtension(fileName, ".txt"); // Добавляем расширение .txt к имени файла
-
-                using (StreamWriter writer = new StreamWriter(fileName))
-                {
-                    // Сохранение параметров игры в файл
-                    writer.WriteLine(playerX);
-                    writer.WriteLine(playerY);
-                    writer.WriteLine(playerHP);
-                    writer.WriteLine(playerStrong);
-                    writer.WriteLine(playerStepCount);
-                    writer.WriteLine(enemyCount);
-                    writer.WriteLine(bossCount);
-
-                    // Сохранение карты в файл
-                    for (int i = 0; i < mapSize; i++)
-                    {
-                        for (int j = 0; j < mapSize; j++)
-                        {
-                            writer.Write(map[i, j]);
-                        }
-                        writer.WriteLine();
-                    }
-
-                    Console.WriteLine($"Игра успешно сохранена в файле {fileName}");
-                }
             }
         }
-        static void GameLoad()
+        static void LoadGame()
         {
-            Console.SetCursorPosition(40, 15);
-            Console.WriteLine("Введите имя файла для загрузки");
-            Console.SetCursorPosition(40, 16);
-            string fileName = Console.ReadLine();
-
-            fileName = Path.ChangeExtension(fileName, ".txt"); // Добавляем расширение .txt к имени файла
-
-            if (!File.Exists(fileName))
-            {
-                Console.WriteLine("Файл не найден.");
-                return;
-            }
-
-            using (StreamReader reader = new StreamReader(fileName))
+            using (StreamReader reader = new StreamReader("save.txt"))
             {
                 playerX = int.Parse(reader.ReadLine());
                 playerY = int.Parse(reader.ReadLine());
@@ -713,15 +620,17 @@ namespace PZ_16
                 playerStepCount = byte.Parse(reader.ReadLine());
                 enemyCount = byte.Parse(reader.ReadLine());
                 bossCount = byte.Parse(reader.ReadLine());
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < mapSize; i++)
                 {
                     string save = reader.ReadLine();
-                    for (int j = 0; j < 25; j++)
+                    for (int j = 0; j < mapSize; j++)
                     {
                         map[i, j] = save[j];
                     }
                 }
             }
+            UpdateMap();
+            Move();
         }
         static void NewGame()
         {
@@ -755,8 +664,6 @@ namespace PZ_16
         }
         static void FightBoss()
         {
-            
-
             byte enemyHP = 40;
             byte enemyStrong = 10;
             int playerOldX = playerX;
@@ -788,28 +695,22 @@ namespace PZ_16
             // Обмен ударами между игроком и врагом
             while (playerHP > 0 && enemyHP > 0 && 41 > enemyHP && enemyHP != 0)
             {
-
                 enemyHP -= playerStrong;
                 playerHP -= enemyStrong;
-                             
-                //Console.WriteLine(enemyHP+ " " +playerHP);
-                
-                
             }
-           // Console.WriteLine(enemyHP + " " + playerHP);
-            // Определяем победителя и обновляем карту
-
-
             if (playerHP <= 50 && playerHP != 0)
-                {
+            {
+                    Console.Clear();
                     Console.SetCursorPosition(40, 15);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"Вы победили всех врагов и босса за {playerStepCount} шагов");
                     bossCount = 0;
                     Console.ResetColor();
-                }
+                    Preview2();
+            }
                 else if(playerHP>50 || playerHP == 0)
                 {
+                    Console.Clear();
                     Console.SetCursorPosition(40, 15);
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"Вы проиграли за {playerStepCount} шагов");
@@ -827,18 +728,14 @@ namespace PZ_16
                 Console.SetCursorPosition(40, 7);
                 Console.WriteLine("                                                                  ");
                 Console.ResetColor();
-            }
-           
+            }          
         }
         static void CloseInfo2()
         {
-
             Console.SetCursorPosition(40, 14);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.WriteLine("                                                                  ");
             Console.ResetColor();
-
         }
-    }
-    
+    }  
 }
